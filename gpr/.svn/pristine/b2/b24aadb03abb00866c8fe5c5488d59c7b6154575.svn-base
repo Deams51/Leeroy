@@ -1,0 +1,132 @@
+-- phpMyAdmin SQL Dump
+-- version 3.5.2.2
+-- http://www.phpmyadmin.net
+--
+-- Version du serveur: 5.5.27
+-- Version de PHP: 5.4.7
+
+SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
+SET time_zone = "+00:00";
+
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8 */;
+
+-- --------------------------------------------------------
+--
+-- Structure de la table `gpr_membres`
+--
+
+CREATE TABLE IF NOT EXISTS `#__gpr_membres` (
+  `id_joomla` int(11) NOT NULL,
+  `id_projet` int(11) NOT NULL,
+  `id_postit` int(11) NOT NULL,
+  `statut` tinyint(1) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+--
+-- Structure de la table `gpr_postit`
+--
+
+CREATE TABLE IF NOT EXISTS `#__gpr_postit` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `texte` text CHARACTER SET utf8 NOT NULL,
+  `token` tinyint(1) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COMMENT='Token est le vu/modifié ou non.' AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+--
+-- Structure de la table `gpr_projet`
+--
+
+CREATE TABLE IF NOT EXISTS `#__gpr_projets` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `nom` varchar(255) CHARACTER SET utf8 NOT NULL,
+  `description` text CHARACTER SET utf8 NOT NULL,
+  `date_creation` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `date_fin` timestamp NOT NULL,
+  `is_tp` tinyint(1) NOT NULL,
+  `services` text CHARACTER SET utf8 NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+--
+-- Structure de la table `gpr_svn`
+--
+
+CREATE TABLE IF NOT EXISTS `#__gpr_svn` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id_projet` int(11) NOT NULL,
+  `id_domaine` int(11) NOT NULL,
+  `id_dns` int(11) NOT NULL,
+  `taille` int(11) NOT NULL,
+  `quota_used` int(11) NOT NULL,
+  `droits` int(2) NOT NULL,
+  `raison_demande` text NOT NULL,
+  `etat` varchar(10) NOT NULL,
+  `reponse` text,
+  `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+--
+-- Structure de la table `gpr_vps`
+--
+
+CREATE TABLE IF NOT EXISTS `#__gpr_vps` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id_projet` int(11) NOT NULL,
+  `id_domaine` int(11) NOT NULL,
+  `id_dns` int(11) NOT NULL,
+  `veid` int(11) NOT NULL,
+  `adresse_ip` varchar(20) DEFAULT NULL,
+  `hostname` varchar(255) DEFAULT NULL,
+  `espace_disque` int(11) NOT NULL,
+  `quota_used` int(11) NOT NULL DEFAULT '0',
+  `ram_min` int(11) NOT NULL,
+  `ram_burst` int(11) NOT NULL,
+  `nb_cpu` int(11) NOT NULL,
+  `max_cpu` int(11) NOT NULL,
+  `raison_demande` text NOT NULL,
+  `etat` varchar(10) NOT NULL,
+  `reponse` text,
+  `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+--
+-- Table structure for table `jos_grp_ip`
+--
+
+CREATE TABLE IF NOT EXISTS `#__gpr_ip` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `ip` varchar(15) NOT NULL,
+  `dispo` tinyint(1) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `ip` (`ip`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+--
+-- Structure de la table `gpr_update`
+-- Cette table permet la communication entre le daemon et le composant.
+
+CREATE TABLE IF NOT EXISTS `#__gpr_updates` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `action` varchar(60) NOT NULL,
+  `id_service` int(11) NOT NULL,
+  `arg` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

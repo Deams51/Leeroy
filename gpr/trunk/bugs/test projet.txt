@@ -1,0 +1,35 @@
+TEST EN TANT QU'USER :
+
+	Page générale :
+	- lors d'une déconnexion, redirection vers la page d'accueil (ça c'est une fonctionalité, on verra si on a le temps Antoine ^^ )
+
+
+	Ajouter Membre :
+	- le membre a droit de refuser une demande d'ajout (fonctionalité)
+	
+
+	Demande de service :
+	- lors de la sélection d'un service, une icône (inutile) apparait entre la checkbox et le nom du service => osef ça vient du thème
+	- changer encodage des mails envoyés pour voir des accents
+
+
+	Suppression du projet :
+	- suppression des entrées dans la table membres, et suppression des postits à la suppression d'un projet
+	
+
+
+PARTIE ADMINISTRATEUR
+
+	Gestion des projets:
+	- lors d'un clic sur un type de tri d'une liste : rien ne se passe --> mettre liens
+	- après sélection d'un ou plusieurs objets dans la liste suivi d'un clic sur "effacer" : rien ne se passe
+	- ajouter le nom du projet et un lien vers la description du projet dans une ligne de demande de VPS et de SVN
+
+		Projets :
+	
+		Liste SVN :
+		- après lancement d'une recherche : rien ne se passe
+
+		Liste VPS :
+		- après la supprssion du projet, le statut de la demande passe a deleting et ne change plus
+		- après lancement d'une recherche : rien ne se passe

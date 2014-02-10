@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<updates>
+   <update>
+      <name>Leeroy</name>
+      <description>Gestion de projets et de services (vps, svn...)</description>
+      <element>com_gpr</element>
+      <type>component</type>
+      <version>1.0.0</version>
+ 
+      <infourl title="Leeroy Project">http://project-leeroy.tk</infourl>
+      <downloads>
+         <downloadurl type="full" format="zip">http://project-leeroy.tk/files/com_gpr-1.0.0.zip</downloadurl>
+      </downloads>
+      <tags>
+         <tag>tag</tag>
+      </tags>
+ 
+      <maintainer>Leeroy Team</maintainer>
+      <maintainerurl>http://project-leeroy.tk</maintainerurl>
+      <section>some-section</section>
+      <targetplatform name="joomla" version="3.0" />
+   </update>
+</updates>

@@ -1,0 +1,26 @@
+#!/bin/sh
+DOMAIN=$1
+DOMAIN_path="/var/www/"
+REPO=${DOMAIN_path}${DOMAIN}"/web/svn/projet"
+
+echo "user: "$USER;
+echo "pass: "$PASS;
+echo "repo: "$REPO;
+# test si fichier existe
+test -e /var/log/projet.log || touch /var/log/projet.log
+
+
+# test si fichier existe
+if test -e ${REPO}/conf/authz
+then
+	# Il existe on ajoute le membre
+	echo "* = r" >> ${REPO}/conf/authz
+else
+	# N'existe pas, on crée le fichier et rajoute le membre
+	cat >> ${REPO}/conf/authz << END_TEXT
+[/]
+* = r
+END_TEXT
+	echo "* = r" >> ${REPO}/conf/authz
+fi
+#fini

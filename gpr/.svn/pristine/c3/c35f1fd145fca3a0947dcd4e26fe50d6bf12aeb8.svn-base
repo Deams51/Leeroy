@@ -1,0 +1,365 @@
+<?php
+	include 'includes.php';
+	
+	// Initialisation du verrou
+	$lock = "hi";
+	if(!get_lock($lock))
+	{
+		die("Cannot lock file");
+	}
+	
+	//init Joomla Framework
+	define( '_JEXEC', 1 );
+	define( 'DS', DIRECTORY_SEPARATOR );
+	define( 'JPATH_BASE', realpath(dirname(__FILE__).DS.'..'.DS.'..'.DS.'..' ));
+	require_once ( JPATH_BASE .DS.'includes'.DS.'defines.php' );
+	require_once ( JPATH_BASE .DS.'includes'.DS.'framework.php' );
+	$mainframe = JFactory::getApplication('site');
+
+	/* Activation de l'affichage des erreurs */
+	ini_set('display_errors', 'On');
+	error_reporting(E_ALL | E_STRICT);
+
+	// Entrée de log 
+	date_default_timezone_set('UTC');
+	echo 'Leeroy 0.5 - '.date(DATE_RFC822).'
+';
+	// Get a db connection.
+	$db = JFactory::getDbo();
+	// Create a new query object.
+	$query = $db->getQuery(true);
+
+	// On init la query
+	$query
+		->select('*')
+		->from('#__gpr_updates');
+	 /*
+	// Select all articles for users who have a username which starts with 'a'.
+	// Order it by the created date.
+	$query
+		->select(array('', 'b.username', 'b.name'))
+		->from('#__content AS a')
+		->join('INNER', '#__users AS b ON (a.created_by = b.id)')
+		->where('b.username LIKE \'a%\'')
+		->order('a.created DESC');
+	 */
+	 
+	// Reset the query using our newly populated query object.
+	$db->setQuery($query);
+
+	// Load the results as a list of stdClass objects.
+	$results = $db->loadObjectList();
+	if(!count($results)) 
+	{
+		echo 'Nothing to do => exiting...
+';
+		// On relache le verrou;
+		echo 'Releasing lock and exiting...
+';
+		release_lock($lock);
+		exit;
+	}
+	if(!isset($results))
+	{
+		echo 'Error fetching results : results not std object => exiting...
+';
+		// On relache le verrou;
+		echo 'Releasing lock and exiting...
+';
+		release_lock($lock);
+		exit;
+	}
+	  
+	echo 'Actions dans table update :
+';
+	foreach ($results as $object) 
+	{
+		echo 'Actions : '.$object->{'action'}.' => ';
+		switch($object->{'action'}) 
+		{
+			case 'svn_update_quota':
+				svn_update_quota($object->{'id_service'});
+				clean_up_action(true,$object);
+				break;
+				
+			case 'svn_update_quota_all':
+				try
+				{
+					// Create a new query object.
+					$query_svn = $db->getQuery(true);
+					$query_svn
+						->select('*')
+						->from('#__gpr_svn AS service')
+						->where("service.etat ='ok'");						
+					// Reset the query using our newly populated query object.
+					$db->setQuery($query_svn);
+					// Load the results as a list of stdClass objects.
+					$liste = $db->loadObjectList();
+					var_dump($liste);
+					foreach($liste as $service)
+					{
+						svn_update_quota($service->{'id'});
+					}
+				}
+				catch(Exception $e)
+				{
+					 $e->getMessage();
+					// On arrête la création de en cas d'erreur
+				}
+				clean_up_action(true,$object);				
+				break;
+				
+			case 'svn_create':
+				/* On récupère les arguments nécessaire dans la bdd */
+				/* On a besoin du domaine (dans le fichier de config)
+				de l'id du service (table gpr_update)
+				de la taille du svn (table #__gpr_svn)
+				des droits à paramétrer // // // //
+				des username des membres à ajouter (tables membres)
+				des mots de passe pour chaque membres (généré, puis envoyer à la fin par email si tout c'est bien passé)
+				donc leur emails aussi
+				*/
+				$id_service = $object->{'id_service'};
+				try
+				{
+					// Create a new query object.
+					$query_svn = $db->getQuery(true);
+
+					$query_svn
+						->select('*')
+						->from('#__gpr_svn AS service')
+						->where('service.id = '.$id_service);
+					// Reset the query using our newly populated query object.
+					$db->setQuery($query_svn);
+
+					// Load the results as a list of stdClass objects.
+					$liste = $db->loadObjectList();
+					// On ne s'intéresse qu'au premier résultat
+					$service = $liste[0];
+					// Create a new query object.
+					$query_svn_membres = $db->getQuery(true);
+					
+					// On va récupérer les membres du projet
+					$query_svn_membres
+						->select('*')
+						->from('#__gpr_membres AS m')
+						->where('m.id_projet = '.$service->{'id_projet'});
+					// Reset the query using our newly populated query object.
+					$db->setQuery($query_svn_membres);
+
+					// Load the results as a list of stdClass objects.
+					$membres = $db->loadObjectList();
+					/* On appel la création */
+					$res = svn_create($service,$membres);
+					clean_up_action($res,$object);
+					
+				}
+				catch(Exception $e)
+				{
+					 echo "Erreur in daemon.php: ".$e->getMessage();
+					// On arrête la création de en cas d'erreur
+				}
+				catch (SoapFault $e) {
+					echo 'Soap error in daemon.php : '.$client->__getLastResponse();
+					echo "<pre>SoapFault: ".print_r($e, true)."</pre>\n";
+					// On nettoie
+					
+					
+				}	
+				break;
+
+			case 'svn_create2':
+				// On regarde si le temps est écoulé = 2min
+				$time_saved = $object->{'arg'};
+				$condition = (int)$time_saved + (int)120;
+				if (time() > $condition)
+				{
+					echo 'ready, processing : 
+';
+					$id_service = $object->{'id_service'};
+					try
+					{
+						// Create a new query object.
+						$query_svn = $db->getQuery(true);
+
+						$query_svn
+							->select('*')
+							->from('#__gpr_svn AS service')
+							->where('service.id = '.$id_service);
+						// Reset the query using our newly populated query object.
+						$db->setQuery($query_svn);
+
+						// Load the results as a list of stdClass objects.
+						$liste = $db->loadObjectList();
+						// On ne s'intéresse qu'au premier résultat
+						$service = $liste[0];
+						// Create a new query object.
+						$query_svn_membres = $db->getQuery(true);
+						
+						// On va récupérer les membres du projet
+						$query_svn_membres
+							->select('*')
+							->from('#__gpr_membres AS m')
+							->where('m.id_projet = '.$service->{'id_projet'});
+						// Reset the query using our newly populated query object.
+						$db->setQuery($query_svn_membres);
+
+						// Load the results as a list of stdClass objects.
+						$membres = $db->loadObjectList();
+							
+						/* On appel la création */
+						$res = svn_create2($service,$membres);
+						clean_up_action($res,$object);
+					}
+					catch(Exception $e)
+					{
+						 $e->getMessage();
+						// On arrête la création de en cas d'erreur
+					}
+				}
+				else echo 'not ready
+';
+				break;
+
+			case 'svn_delete':
+				try
+				{
+					// Create a new query object.
+					$query_svn = $db->getQuery(true);
+
+					$query_svn
+						->select('*')
+						->from('#__gpr_svn AS service')
+						->where('service.id = '.$object->{'id_service'});
+					// Reset the query using our newly populated query object.
+					$db->setQuery($query_svn);
+
+					// Load the results as a list of stdClass objects.
+					$liste = $db->loadObjectList();
+					// On ne s'intéresse qu'au premier résultat
+					$service = $liste[0];
+					$res = svn_delete($service);
+					clean_up_action($res,$object);
+					// maintenant qu'on a terminé on delete l'entrée dans la table svn
+					delete_row('#__gpr_svn','id',$service->{'id'});
+				}
+				catch(Exception $e)
+				{
+					echo $e->getMessage();
+					// On arrête la création de en cas d'erreur
+				}	
+				break;
+
+			case 'vps_create':
+				/* On récupère les arguments nécessaire dans la bdd */
+				$id_service = $object->{'id_service'};
+				try
+				{
+					// Create a new query object.
+					$query_vps = $db->getQuery(true);
+
+					$query_vps
+						->select('*')
+						->from('#__gpr_vps AS service')
+						->where('service.id = '.$id_service);
+					// Reset the query using our newly populated query object.
+					$db->setQuery($query_vps);
+
+					// Load the results as a list of stdClass objects.
+					$liste = $db->loadObjectList();
+					// On ne s'intéresse qu'au premier résultat
+					$service = $liste[0];
+					// Create a new query object.
+					$query_vps_admin = $db->getQuery(true);
+					
+					// On va récupérer le chef du projet
+					$query_vps_admin
+						->select('*')
+						->from('#__gpr_membres AS m')
+						->where('m.id_projet = '.$service->{'id_projet'}.' AND m.statut = 1');
+					// Reset the query using our newly populated query object.
+					$db->setQuery($query_vps_admin);
+
+					// Load the results as a list of stdClass objects.
+					$liste_admin = $db->loadObjectList();
+					$admin = $liste_admin[0];
+					/* On appel la création */
+					$res = vps_create($service,$admin);
+					clean_up_action($res,$object);
+				}
+				catch(Exception $e)
+				{
+					echo 'failed
+';
+					echo $e->getMessage();
+					// On arrête la création de en cas d'erreur
+				}	
+				break;
+
+			case 'vps_delete':
+				try
+				{
+					// Create a new query object.
+					$query_vps = $db->getQuery(true);
+
+					$query_vps
+						->select('*')
+						->from('#__gpr_vps AS service')
+						->where('service.id = '.$object->{'id_service'});
+					// Reset the query using our newly populated query object.
+					$db->setQuery($query_vps);
+
+					// Load the results as a list of stdClass objects.
+					$liste = $db->loadObjectList();
+					// On ne s'intéresse qu'au premier résultat
+					$service = $liste[0];
+					$res = vps_delete($service);
+					clean_up_action($res,$object);
+				}
+				catch(Exception $e)
+				{
+					echo $e->getMessage();
+					// On arrête la création de en cas d'erreur
+				}	
+				break;
+
+			default :
+				echo 'Error : action not valid !
+';
+				break;
+		}
+	}
+	// On relache le verrou;
+	echo 'Releasing lock and exiting...
+';
+	release_lock($lock);
+	exit;
+
+function clean_up_action($res,$object)
+{
+	if ($res != true)
+	{
+		echo 'failed
+';					
+	}
+	else
+	{
+		$resultat = 'none';
+	    echo 'OK
+';
+		try
+		{
+			// On enlève la tache de la table
+			$resultat = delete_row('#__gpr_updates','id',$object->{'id'});
+		}
+		catch(Exception $e)
+		{
+			echo 'clean_up_action: '.$e->getMessage();
+			return false;
+		}
+		echo 'Actions deleted : '.$resultat.'
+';
+		return true;
+	}
+}
+?>

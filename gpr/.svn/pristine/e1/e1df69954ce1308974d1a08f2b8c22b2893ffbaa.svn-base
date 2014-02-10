@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="component" version="3.0.0" method="upgrade">
+    <name>com_gpr</name>
+    <creationDate>2013-04</creationDate>
+    <copyright>Copyright (C) 2013. All rights reserved.</copyright>
+    <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
+    <author>Choulet Quentin, Fourgeaud Mickaël, Hauguel Antoine, Malory Tristan</author>
+    <authorEmail></authorEmail>
+    <authorUrl></authorUrl>
+    <version>1.0.0</version>
+    <description>Gestion des projets et des services associés.</description>
+ 
+
+	<install> <!-- Runs on install -->
+			<sql>
+					<file driver="mysql" charset="utf8">sql/install.mysql.utf8.sql</file>
+			</sql>
+	</install>
+			<uninstall> <!-- Runs on uninstall -->
+					<sql>
+							<file driver="mysql" charset="utf8">sql/uninstall.mysql.utf8.sql</file>
+					</sql>
+			</uninstall>
+
+	<!-- Site Main File Copy Section -->
+	<!-- Note the folder attribute: This attribute describes the folder
+			to copy FROM in the package to install therefore files copied
+			in this section are copied from /site/ in the package -->
+	<files folder="site">
+			<filename>index.html</filename>
+			<filename>gpr.php</filename>
+			<filename>controller.php</filename>
+			<filename>router.php</filename>
+			<folder>views</folder>
+			<folder>models</folder>
+			<folder>controllers</folder>
+	</files>
+
+   <administration>
+        <menu img="components/com_gpr/assets/images/s_com_gpr.png" >COM_GPR</menu>
+        <submenu>
+			<menu link="option=com_gpr&amp;view=projets" view="projets">COM_GPR_TITLE_PROJETS</menu>
+			<menu link="option=com_gpr&amp;view=listesvn" view="listesvn">COM_GPR_TITLE_LISTESVN</menu>
+			<menu link="option=com_gpr&amp;view=listevps" view="listevps">COM_GPR_TITLE_LISTEVPS</menu>
+			<menu link="option=com_gpr&amp;view=monitoring" view="listevps">COM_GPR_TITLE_MONITORING</menu>
+        </submenu>
+        <files folder="administrator">
+            <filename>access.xml</filename>
+            <filename>config.xml</filename>
+            <filename>controller.php</filename>
+            <filename>index.html</filename>
+            <filename>gpr.php</filename>
+            <folder>controllers</folder>
+            <folder>assets</folder>
+            <folder>helpers</folder>
+            <folder>Leeroy</folder>
+            <folder>models</folder>
+            <folder>sql</folder>
+            <folder>tables</folder>
+            <folder>views</folder>
+        </files>
+        <languages folder="administrator">       
+			<language tag="fr-FR">language/fr-FR.com_gpr.ini</language>
+			<language tag="fr-FR">language/fr-FR.com_gpr.sys.ini</language>
+        </languages>
+    </administration> 
+</extension>

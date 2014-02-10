@@ -1,0 +1,52 @@
+TEST EN TANT QU'USER :
+
+	Page générale :
+	- mettre onglet "créer projet" avec une majuscule
+	- lors d'une déconnexion, redirection vers la page d'accueil (ça c'est une fonctionalité, on verra si on a le temps Antoine ^^ )
+
+	Mes projets :
+	(- ne pas mettre la colonne chef si on est pas le chef)
+
+
+
+	Créer projet :
+	- le projet ne doit pas s'ajouter si la description n'est pas remplie	
+
+	Description Projet :
+	- si on n’est pas chef de projet, pas besoin des colonnes "supprimer" et "transférer les droits"
+	- mettre lien de redirection vers la description du projet après action dessus (ajout membre, supprimer membre, transfert droits…)
+	(- après suppression des projets, mettre redirection vers "Mes projets")
+	- demande de confirmation pour "supprimer membre", "transfert droit" et "supprimer projet"
+	(- changer la position de l'étoile du chef de projet ex : plus a droite ou a gauche du nom)
+	- après suppression d'un projet, les services correspondants ne sont pas supprimés
+	- changer titre confirmation transfert de droits
+	- supprimer bouton "ajouter membre" quand on est pas chef de projet
+
+		Ajouter Membre :
+		- faire un ajout par Nom et pas par id.
+		- le membre a droit de refuser une demande d'ajout (fonctionalité)
+	
+
+	Demande de service :
+	- lors de la sélection d'un service, une icône (inutile) apparait entre la checkbox et le nom du service
+	- changer encodage des mails envoyés pour voir des accents
+	- on a toutes les demandes de services du user dans un seul projet
+	(- avoir le nom du projet rattaché aux demandes de service)
+
+
+
+PARTIE ADMINISTRATEUR
+
+	Gestion des projets:
+	- lors d'un clic sur un type de tri d'une liste : rien ne se passe --> mettre liens
+	- après sélection d'un ou plusieurs objets dans la liste suivi d'un clic sur "effacer" : rien ne se passe
+	
+		Projets :
+	
+		Liste SVN :
+		- après lancement d'une recherche : rien ne se passe
+
+		Liste VPS :
+		- après lancement d'une recherche : rien ne se passe
+		- champs du tableau qui ne correspondent pas (date dans la colonne "Max CPU",raison dans la colonne "Nb CPU"...)
+

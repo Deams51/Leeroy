@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<metadata>
+    <layout title="Sous-menu gestion projet">
+        <message>
+        </message>
+    </layout>
+    <fields name="request">
+        <fieldset name="request">
+            <field name="task" type="list">
+                <option value="projets.affichers">Mes projets</option>
+                <option value="projets.creer">Créer un projet</option>
+            </field>
+        </fieldset>
+    </fields>
+</metadata>

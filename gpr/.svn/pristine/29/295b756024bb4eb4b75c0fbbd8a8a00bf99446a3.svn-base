@@ -1,0 +1,13 @@
+Les bugs qui ont été corriger à retester :
+-	Redirection après une action
+-	Affichage propre des erreurs
+-	Fenêtres de confirmation avant suppression ou transfert des droits
+-	Possibilité de quitter le projet
+-	mettre onglet "créer projet" avec une majuscule
+- 	le projet ne doit pas s'ajouter si la description n'est pas remplie	
+- 	si on n’est pas chef de projet, pas besoin des colonnes "supprimer" et "transférer les droits"
+- 	après suppression d'un projet, les services correspondants ne sont pas supprimés
+- 	changer titre confirmation transfert de droits
+-	supprimer bouton "ajouter membre" quand on est pas chef de projet
+- 	on a toutes les demandes de services du user dans un seul projet
+	

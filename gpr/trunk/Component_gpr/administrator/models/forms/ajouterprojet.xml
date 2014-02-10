@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+	<fieldset>
+
+		<field name="description" type="textarea" default="" 
+            label="COM_GPR_FORM_LBL_AJOUTERPROJET_DESCRIPTION"
+            description="COM_GPR_FORM_DESC_AJOUTERPROJET_DESCRIPTION" 
+			rows="10" 
+			cols="5" 
+			filter="raw" /> 
+
+		<field name="id" type="text" default="0" 
+			label="COM_GPR_FORM_LBL_AJOUTERPROJET_ID"
+            readonly="true" class="readonly"
+            description="JGLOBAL_FIELD_ID_DESC" />
+
+		<field name="nom" type="text"                
+            label="COM_GPR_FORM_LBL_AJOUTERPROJET_NOM"
+            description="COM_GPR_FORM_DESC_AJOUTERPROJET_NOM"   
+            required="true" 
+            class="nom-projet"
+            filter="safehtml"
+            size="50"
+            maxlength="50" />
+	</fieldset>   
+	<fieldset name="accesscontrol">
+ 
+                <field name="asset_id" type="hidden" filter="unset" /> 
+ 
+                <field
+                        name="rules"
+                        type="rules"
+                        label="JFIELD_RULES_LABEL"
+                        translate_label="false"
+                        filter="rules"
+                        validate="rules"
+                        class="inputbox"
+                        component="com_gpr"
+                        section="ajouterprojet" />
+        </fieldset>
+
+</form>

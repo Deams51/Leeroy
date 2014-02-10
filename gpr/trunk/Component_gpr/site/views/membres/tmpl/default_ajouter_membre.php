@@ -1,0 +1,25 @@
+<?php
+	//empeche l'accès direct au fichier
+	defined('_JEXEC') or die ('Restricted access');
+
+	JHTML::script(JURI::base().'media/jui/js/jquery.js');
+	JHTML::script(JURI::base().'media/jui/js/jquery-noconflict.js');
+	JHTML::script(JURI::base().'administrator/components/com_gpr/assets/js/autocompletion.js');
+	JHTML::stylesheet(JURI::base().'administrator/components/com_gpr/assets/css/autocomplete.css');
+?>
+<!--[if gte IE 9]>
+  <style type="text/css">
+    .gradient {
+       filter: none;
+    }
+  </style>
+<![endif]-->
+
+<!-- Projets - Ajout membres -->
+<h1>Ajout d'un membre</h1>
+<form id="form_ajouter_membre" method="post" action=<?php echo "\"".JRoute::_('index.php?option=com_gpr&task=membres.ajouter&view=membres&id_projet='.$this->msg)."\""; ?>>
+	<label for="nom_membre">Nom du membre à ajouter : </label><input type="text" name="nom_membre" id="nom_membre" autocomplete="off"/>
+	<div id="suggestions"></div>
+	<br />
+	<input type = "submit" name="submit" VALUE="Valider" />
+</form>

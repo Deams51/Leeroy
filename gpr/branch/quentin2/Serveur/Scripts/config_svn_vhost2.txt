@@ -1,0 +1,34 @@
+if [ $ANON = "y" ] ; then
+
+cat  >> ${HTTP_CONF_D}/${REPO_NAME}.conf << END_TEXT
+<Location /svn/${REPO_NAME}>
+DAV svn 
+SVNPath /${SVN_BASE}/${ID_Projet}/${REPO_NAME}
+AuthzSVNAccessFile ${SVN_BASE}/${ID_Projet}/${REPO_NAME}/conf/authz
+<LimitExcept GET PROPFIND OPTIONS REPORT>
+Require valid-user
+</LimitExcept>
+AuthType Basic
+AuthName "${REPO_NAME} Repository"
+AuthUserFile ${DOMAIN}/conf/.htpasswd
+</Location>
+END_TEXT
+
+
+
+else
+
+cat  >> ${HTTP_CONF_D}/${REPO_NAME}.conf << END_TEXT
+<Location /svn/${REPO_NAME}>
+DAV svn
+SVNPath /${SVN_BASE}/${ID_Projet}/${REPO_NAME}
+AuthzSVNAccessFile ${SVN_BASE}/${ID_Projet}/${REPO_NAME}/conf/authz
+Satisfy all
+Require valid-user
+AuthType Basic
+AuthName "${REPO_NAME} Repository"
+AuthUserFile ${DOMAIN}/conf/.htpasswd
+</Location>
+END_TEXT
+
+fi

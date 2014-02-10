@@ -1,0 +1,34 @@
+TEST EN TANT QU'USER :
+
+	Page générale :
+	- lors d'une déconnexion, redirection vers la page d'accueil (ça c'est une fonctionalité, on verra si on a le temps Antoine ^^ )
+
+
+	Ajouter Membre :
+	- le membre a droit de refuser une demande d'ajout (fonctionalité)
+	- lorsqu'on essaye de s'ajouter soit-meme, on a "l'utilisateur Administrator n'existe pas" au lieu de "Déja membre du projet"
+	
+
+	Demande de service :
+	- lors de la sélection d'un service, une icône (inutile) apparait entre la checkbox et le nom du service => osef ça vient du thème
+	- changer encodage des mails envoyés pour voir des accents
+
+	Quitter le projet :
+	- faute d'ortographe dans le message de confirmation
+
+
+PARTIE ADMINISTRATEUR
+
+	Gestion des projets:
+	- lors d'un clic sur un type de tri d'une liste : rien ne se passe --> mettre liens
+	- après sélection d'un ou plusieurs objets dans la liste suivi d'un clic sur "effacer" : rien ne se passe
+	
+		Projets :
+	
+		Liste SVN :
+		- après lancement d'une recherche : rien ne se passe
+
+		Liste VPS :
+		- après lancement d'une recherche : rien ne se passe
+		- champs du tableau qui ne correspondent pas (date dans la colonne "Max CPU",raison dans la colonne "Nb CPU"...)
+

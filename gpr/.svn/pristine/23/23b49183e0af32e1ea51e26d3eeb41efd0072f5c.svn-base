@@ -1,0 +1,62 @@
+<?php
+	//empeche l'accès direct au fichier
+	defined('_JEXEC') or die ('Restricted access');
+
+?>
+<h1>Gestion des services</h1>
+<?php
+	//on récupère l'utilisateur connecté
+	$user = JFactory::getUser();
+	//statut de l'utilisateur (true si propriétaire, false si membre
+	$proprietaire = $this->getModel()->estProprietaire($user->id, $this->msg['id_projet']);
+
+	if($proprietaire)
+	{
+?>
+<h2>Demander un service</h2>
+<form method="post" action=<?php echo "\"".JRoute::_('')."\""; ?>>
+	<input style="float:left" type="checkbox" name="svn" />
+	<label for="svn">SVN (Subversion)</label>
+	<div style="clear:both;"></div>
+	<fieldset id="form_svn">
+		<label for="description_svn">Description du besoin : </label>
+		<textarea name="description_svn"></textarea>
+		<label for="taille_svn">Espace disque (MB) : </label><input type="text" name="taille_svn" />
+		<label for="droits_svn">Droits</label>
+		<select name="droits_svn" size="1">
+			<option value="0">Privé (aucuns droits pour les non-membres du projet)</option>
+			<option value="1">Protégé (lecture seulement pour les non membres du projet)</option>
+		</select>
+	</fieldset>
+	<input style="float:left" type="checkbox" name="vps" />
+	<label for="svn">VPS (Virtual Private Server)</label>
+	<div style="clear:both;"></div>
+	<fieldset id="form_vps">
+		<label for="description_vps">Description du besoin : </label>
+		<textarea name="description_vps"></textarea>
+		<label for="taille_vps">Espace disque (MB) : </label><input type="text" name="taille_vps" />
+		<label for="ram_mini_vps">RAM mini (MB) : </label><input type="text" name="ram_mini_vps" />
+		<label for="ram_burst_vps">RAM burst (MB) : </label><input type="text" name="ram_burst_vps" />
+		<label for="cpu_vps">Nombre de cpu : </label><input type="text" name="cpu_vps" />
+	</fieldset>
+	
+	<input type="submit" name="submit" value = "Valider" />
+</form>
+<script>
+	jQuery(document).ready(function(){
+		jQuery('#form_svn').hide();
+		jQuery('#form_vps').hide();
+
+		jQuery('input[type=checkbox]').click(function (){
+			if(jQuery(this).is(':checked'))
+			{
+				jQuery('#form_'+jQuery(this).attr('name')).show();
+			}
+			else
+			{
+				jQuery('#form_'+jQuery(this).attr('name')).hide();
+			}
+		});
+	});
+</script>
+<?php } ?>

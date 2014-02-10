@@ -1,0 +1,8 @@
+Les bugs qui ont été corriger à retester :	
+- 	après suppression d'un projet, les services correspondants ne sont pas supprimés
+- 	changer titre confirmation transfert de droits
+-	supprimer bouton "ajouter membre" quand on est pas chef de projet
+- 	on a toutes les demandes de services du user dans un seul projet
+-	changer la position de l'étoile du chef de projet ex : plus a droite ou a gauche du nom
+-	suppression des entrées dans la table membres, et suppression des postits à la suppression d'un projet
+	

@@ -1,0 +1,3 @@
+//org.eclipse.ui.commands/state/com.modeliosoft.modelio.diagram.browser.SwitchBrowserTypeCommandID/org.eclipse.ui.commands.radioState=user
+//org.eclipse.ui.commands/state/org.modelio.linkeditor.SetOrientationRadioCommandID/org.eclipse.ui.commands.radioState=Auto
+eclipse.preferences.version=1

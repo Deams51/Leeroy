@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+	<fieldset>
+
+		<field name="id" type="text" default="0" 
+			label="COM_GPR_FORM_LBL_AJOUTERIP_ID"
+            readonly="true" class="readonly"
+            description="JGLOBAL_FIELD_ID_DESC" />
+
+		<field name="ip" type="text"                
+            label="COM_GPR_FORM_LBL_AJOUTERIP_NOM"
+            description="COM_GPR_FORM_DESC_AJOUTERIP_NOM"   
+            required="true" 
+            class="nom-projet"
+            filter="safehtml"
+            size="50"
+            maxlength="50" />
+
+        <field name="dispo" type="text" default="0" 
+            label="COM_GPR_FORM_LBL_AJOUTERIP_ID"
+            description="JGLOBAL_FIELD_ID_DESC" 
+            required="true"
+            maxlength="1"/>
+	</fieldset>   
+	<fieldset name="accesscontrol">
+ 
+                <field name="asset_id" type="hidden" filter="unset" /> 
+ 
+                <field
+                        name="rules"
+                        type="rules"
+                        label="JFIELD_RULES_LABEL"
+                        translate_label="false"
+                        filter="rules"
+                        validate="rules"
+                        class="inputbox"
+                        component="com_gpr"
+                        section="AJOUTERIP" />
+        </fieldset>
+
+</form>

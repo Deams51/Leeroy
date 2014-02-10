@@ -1,0 +1,28 @@
+Pour gérer les quota svn : 
+
+http://www.thedumbterminal.co.uk/php/knowledgebase/article/90
+
+
+fichier ./svn/projet/hooks/pre-commit
+#!/bin/sh
+
+REPOS="$1"
+TXN="$2"
+
+# Set the maximum allowed size for this repository
+QUOTA="70"
+# Measure the current size of this repository to compare against our quota
+SIZE=`du -sm $REPOS | sed -r "s/^([0-9\.]+).+/\1/"`
+
+# If the current size is greater than the quota set then prohibit the transaction
+if [ "$SIZE" -gt "$QUOTA" ]; then
+  # Send error message to STDERR
+  echo "Your usage quota of ${QUOTA}MB has been exceeded for this repository. Ask an admin for more space." 1>&2
+  exit 1
+fi
+
+# Exit on all errors.
+set -e
+
+# All checks passed, so allow the commit.
+exit 0

@@ -1,0 +1,42 @@
+<?php
+	if (file_exists(__DIR__ . '/config.php'))
+	{
+		include_once __DIR__ . '/config.php';
+	}
+	else
+	{
+		die("missing include config.php");
+	}
+	if (file_exists(__DIR__ . '/svn.php'))
+	{
+		include_once __DIR__ . '/svn.php';
+	}
+	else
+	{
+		die("missing include svn.php");
+	}
+	if (file_exists(__DIR__ . '/vps.php'))
+	{
+		include_once __DIR__ . '/vps.php';
+	}
+	else
+	{
+		die("missing include vps.php");
+	}
+	if (file_exists(__DIR__ . '/lock.php'))
+	{
+		include_once __DIR__ . '/lock.php';
+	}
+	else
+	{
+		die("missing include lock.php");
+	}
+	if (file_exists(__DIR__ . '/utils.php'))
+	{
+		include_once __DIR__ . '/utils.php';
+	}
+	else
+	{
+		die("missing include");
+	}
+?>

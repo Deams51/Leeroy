@@ -1,0 +1,10 @@
+<Location />
+  DAV svn
+  SVNPath /var/lib/svn/1/Projet
+  AuthType Basic
+  AuthName "Subversion Repository"
+  AuthUserFile  /var/lib/svn/1/Projet/conf/passwd
+  <LimitExcept GET PROPFIND OPTIONS REPORT>
+    Require valid-user
+  </LimitExcept>
+</Location>

@@ -1,0 +1,265 @@
+Notes : 
+Pour rediriger tous les sous domaines sur la meme ip : faire un A record avec * en sous domaine.
+
+ 
+DNS Server (primary)
+
+root pass : A1b4YEnH
+
+Hostname: s1.stic-test.tk
+IP address: 91.121.222.30
+mysql root : rondoudou
+challenge name : rondoudou
+______________________________________
+Installation :
+Bien créer une partition séparée pour les VMs. Sinon on ne peut pas gérer les quotas.
+
+Configuration :
+nano /etc/hosts
+
+	127.0.0.1       localhost
+	83.154.13.8     s2.stic-test.tk
+	91.121.222.30   ks305853.kimsufi.com
+	91.121.222.30   s1.stic-test.tk
+
+	# The following lines are desirable for IPv6 capable hosts
+	::1     localhost ip6-localhost ip6-loopback
+	fe00::0 ip6-localnet
+	ff00::0 ip6-mcastprefix
+	ff02::1 ip6-allnodes
+	ff02::2 ip6-allrouters
+	ff02::3 ip6-allhosts
+
+	
+echo s1.stic-test.tk > /etc/hostname
+/etc/init.d/hostname.sh start
+
+nano /etc/apt/sources.list
+
+apt-get update
+apt-get upgrade
+
+apt-get -y install ntp ntpdate
+
+apt-get -y install mysql-client mysql-server
+
+nano /etc/mysql/my.cnf
+-- Commenting : # bind-address          = 127.0.0.1
+
+/etc/init.d/mysql restart
+
+apt-get -y install apache2 apache2.2-common apache2-doc apache2-mpm-prefork apache2-utils libexpat1 ssl-cert libapache2-mod-php5 php5 php5-common php5-curl php5-gd php5-mysql php5-imap phpmyadmin php5-cli php5-cgi libapache2-mod-fcgid apache2-suexec php-pear php-auth php5-mcrypt mcrypt php5-imagick imagemagick libapache2-mod-suphp libruby libapache2-mod-ruby libapache2-mod-perl2 sudo zip wget
+
+-- Selecting Apache
+-- Selecting no for db config common for phpmyadmin
+
+a2enmod suexec rewrite ssl actions include ruby dav_fs dav auth_digest
+
+apt-get -y install pure-ftpd-common pure-ftpd-mysql quota quotatool
+
+nano /etc/default/pure-ftpd-common
+-- setting VIRTUALCHROOT=true
+
+echo 1 > /etc/pure-ftpd/conf/TLS
+
+mkdir -p /etc/ssl/private/
+
+openssl req -x509 -nodes -days 7300 -newkey rsa:2048 -keyout /etc/ssl/private/pure-ftpd.pem -out /etc/ssl/private/pure-ftpd.pem
+-- filling form... ---
+
+chmod 600 /etc/ssl/private/pure-ftpd.pem
+
+/etc/init.d/pure-ftpd-mysql restart
+
+nano /etc/fstab
+-- ext3    errors=remount-ro,usrjquota=aquota.user,grpjquota=aquota.group,jqfmt=vfsv0 0       1
+
+mount -o remount /
+
+quotacheck -avugm
+quotaon -avug
+
+apt-get -y install vlogger webalizer awstats
+
+nano /etc/cron.d/awstats
+-- comment everything
+
+apt-get -y install build-essential autoconf automake1.9 libtool flex bison debhelper
+
+cd /tmp
+wget http://olivier.sessink.nl/jailkit/jailkit-2.14.tar.gz
+tar xvfz jailkit-2.14.tar.gz
+cd jailkit-2.14
+./debian/rules binary
+cd ..
+dpkg -i jailkit_2.14-1_*.deb
+rm -rf jailkit-2.14*
+
+apt-get install fail2ban
+nano /etc/fail2ban/jail.local
+-- adding 
+			[pureftpd]
+
+			enabled  = true
+			port     = ftp
+			filter   = pureftpd
+			logpath  = /var/log/syslog
+			maxretry = 3
+
+nano  /etc/fail2ban/filter.d/pureftpd.conf
+-- adding 
+
+			[Definition]
+			failregex = .*pure-ftpd: \(.*@<HOST>\) \[WARNING\] Authentication failed for user.*
+			ignoreregex =
+			
+			
+mysql -u root -p 
+ -- adding root user for secondary server
+ CREATE USER 'root'@'83.154.13.8' IDENTIFIED BY 'rondoudou';
+GRANT ALL PRIVILEGES ON * . * TO 'root'@'83.154.13.8' IDENTIFIED BY 'rondoudou' WITH GRANT OPTION MAX_QUERIES_PER_HOUR 0 MAX_CONNECTIONS_PER_HOUR 0 MAX_UPDATES_PER_HOUR 0 MAX_USER_CONNECTIONS 0 ;
+CREATE USER 'root'@'s1.stic-info.tk' IDENTIFIED BY 'rondoudou';
+GRANT ALL PRIVILEGES ON * . * TO 'root'@'s1.stic-info.tk' IDENTIFIED BY 'rondoudou' WITH GRANT OPTION MAX_QUERIES_PER_HOUR 0 MAX_CONNECTIONS_PER_HOUR 0 MAX_UPDATES_PER_HOUR 0 MAX_USER_CONNECTIONS 0 ;
+FLUSH PRIVILEGES;
+QUIT;
+
+apt-get -y install postfix postfix-mysql postfix-doc mysql-client mysql-server openssl getmail4 rkhunter binutils dovecot-imapd dovecot-pop3d
+
+--system mail : stic-test.tk
+
+apt-get -y install amavisd-new spamassassin clamav clamav-daemon zoo unzip bzip2 arj nomarch lzop cabextract apt-listchanges libnet-ldap-perl libauthen-sasl-perl clamav-docs daemon libio-string-perl libio-socket-ssl-perl libnet-ident-perl zip libnet-dns-perl
+
+apt-get -y install php5-cli php5-mysql php5-mcrypt mcrypt
+
+apt-get install fail2ban
+
+nano  /etc/fail2ban/jail.local
+-- adding 
+
+			[dovecot-pop3imap]
+			enabled = true
+			filter = dovecot-pop3imap
+			action = iptables-multiport[name=dovecot-pop3imap, port="pop3,pop3s,imap,imaps", protocol=tcp]
+			logpath = /var/log/mail.log
+			maxretry = 5
+			
+nano /etc/fail2ban/filter.d/dovecot-pop3imap.conf
+-- adding
+			[Definition]
+			failregex = (?: pop3-login|imap-login): .*(?:Authentication failure|Aborted login \(auth failed|Aborted login \(tried to use disabled|Disconnected \(auth failed|Aborted login \(\d+ authentication attempts).*rip=(?P<host>\S*),.*
+			ignoreregex =
+			
+/etc/init.d/fail2ban restart
+
+régler probleme fail2ban !!!!!!!!!!!!!!
+
+apt-get -y install bind9 dnsutils
+
+
+apt-get update && apt-get -y upgrade && apt-get -y dist-upgrade
+
+apt-get install linux-image-openvz-amd64 vzctl vzquota vzdump
+
+ln -s /var/lib/vz /vz
+
+nano /etc/sysctl.conf
+		[...]
+		net.ipv4.conf.all.rp_filter=1
+		net.ipv4.icmp_echo_ignore_broadcasts=1
+		net.ipv4.conf.default.forwarding=1
+		net.ipv4.conf.default.proxy_arp = 0
+		net.ipv4.ip_forward=1
+		kernel.sysrq = 1
+		net.ipv4.conf.default.send_redirects = 1
+		net.ipv4.conf.all.send_redirects = 0
+		net.ipv4.conf.eth0.proxy_arp=1
+		[...]
+sysctl -p
+
+nano /etc/vz/vz.conf
+		[...]
+		# Controls which interfaces to send ARP requests and modify APR tables on.
+		NEIGHBOUR_DEVS=all
+		[...]
+
+reboot
+-- on regarde si tout se passe bien
+
+uname -r
+
+résultat : 
+2.6.32-5-openvz-amd64
+
+Bien ! 
+-- Tout ne se passe pas bien. La machine ne boot pas sur le bon kernel. C'est du à la version modifiée par ovh. 
+On modifie ça. 
+
+aptitude -y install linux-headers-2.6-openvz-amd64 linux-image-2.6-openvz-amd64
+
+cp /boot/grub/grub.cfg /boot/grub/grub.cfg.bak
+chmod 777 /boot/grub/grub.cfg
+nano /boot/grub/grub.cfg
+-- On supprime : 
+				### BEGIN /etc/grub.d/06_OVHkernel ###
+				menuentry "Debian GNU/Linux, OVH kernel 3.2.13-xxxx-grs-ipv6-64" {
+					insmod part_msdos
+					insmod ext2
+					set root='(hd0,msdos1)'
+					search --no-floppy --fs-uuid --set a7bcc2d9-055c-437b-821c-12684bfc46d2
+					linux	/boot/bzImage-3.2.13-xxxx-grs-ipv6-64 root=/dev/sda1 ro  quiet
+				}
+				### END /etc/grub.d/06_OVHkernel ###
+
+
+reboot
+-- réglé ! 
+
+nano /etc/vz/vz.conf
+-- commenting IPTABLES="ipt_REJECT ipt_tos ipt_limit ipt_multiport iptable_filter iptable_mangle ipt_TCPMSS ipt_tcpmss ipt_ttl ipt_length ipt_state"
+
+
+cd /tmp
+wget http://www.ispconfig.org/downloads/ISPConfig-3-stable.tar.gz
+tar xfz ISPConfig-3-stable.tar.gz
+cd ispconfig3_install/install/
+
+
+
+
+Après configuration de la zone DNS dans ispconfig, on test : 
+
+dig @s1.stic-test.tk any stic-test.tk
+dig @s2.stic-test.tk any stic-test.tk
+
+
+
+
+
+Pour OPENVZ : Il faut faire une partition spéciale pour lui.
+Et si jamais viré : DISK_QUOTA = no du fichier /etc/vz/vz.conf
+
+
+Installation VPS :
+apt-get install subversion
+apt-get install libapache2-svn
+
+
+PHPMYADMIN : ln -s /usr/share/phpmyadmin /var/www/
+
+vps1.stic-test.tk : g+SmzIKL/6
+
+
+
+
+
+
+
+
+
+
+BDD DEMON PROJET :
+create table test (
+id int NOT NULL AUTO_INCREMENT PRIMARY KEY ,
+action varchar(60),
+data varchar(60)
+)

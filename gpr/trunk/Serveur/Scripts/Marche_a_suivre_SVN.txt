@@ -1,0 +1,63 @@
+SVN :
+	Je m’attends à avoir un SVN fonctionnel, pouvoir entrer mon mot de passe. 
+	Site
+	FTP
+	BDD + BBD user ?
+	A record sous domaine
+	SVN
+
+	
+	
+	
+Marche à suivre : 
+
+
+Ajouter nouveau site : 
+	Server : s1.stic-test.tk
+	Client : aucun (defaut)
+	IPV4 : * (defaut)
+	IPV6 : rien (defaut)
+	domain : projet(id projet).stic-test.tk 
+	Harddisk Quota : (nombre) en MB
+	Traffic Quota : -1 (defaut)
+	CGI : non (defaut)
+	SSI : non (defaut)
+	Perl : non (defaut)
+	Ruby : non (defaut)
+	Python : non (defaut)
+	SuExec : oui (defaut)
+	Own error-documents : oui (defaut)
+	auto-subdomain : None (non par défaut)
+	SSl : non  (defaut)
+	PHP : fast-cgi  (defaut)
+	PHP version : rien  (defaut)
+	Active : oui  (defaut)
+	
+	
+
+	Il nous renvoit l'id du domaine crée. On enregistre cette id pour pouvoir l'utiliser dans la bdd.
+	
+On set les directives apache :
+	directives apache : 
+			<Location /svn>
+			  DAV svn
+			  SVNPath /var/lib/svn/(id domaine)/Projet
+			  AuthType Basic
+			  AuthName "Subversion Repository"
+			  AuthUserFile  /var/lib/svn/(id domaine)/Projet/conf/auth.passwd
+			  <LimitExcept GET PROPFIND OPTIONS REPORT>
+				Require valid-user
+			  </LimitExcept>
+			</Location>
+	
+Ajouter A-Record, domaine : stic-test.tk
+	Hostname : projet(id projet)stic-test.tk
+	ip-Adress : (adresse serveur : 91.121.222.30)
+	
+Maintenant on a accès au sous domaine.
+
+Création SVN :
+	Appel du script
+	 chown -R web6:client0 /var/lib/svn/1
+	
+
